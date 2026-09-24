@@ -5,26 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Clasificador de Uvas</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #0a0010;
-      --surface:     #110018;
-      --card:        #1a0028;
-      --border:      rgba(160, 80, 220, 0.2);
-      --border-hi:   rgba(160, 80, 220, 0.5);
-      --purple:      #7c3aed;
-      --purple-hi:   #a855f7;
-      --accent:      #c026d3;
-      --text:        #f0e6ff;
-      --text-muted:  rgba(240, 230, 255, 0.45);
-      --bar-bg:      rgba(255,255,255,0.07);
+      --bg:        #04000d;
+      --surface:   #07001a;
+      --card:      #0b0020;
+      --purple:    #8b5cf6;
+      --violet:    #6d28d9;
+      --pink:      #d946ef;
+      --cyan:      #22d3ee;
+      --text:      #ede9fe;
+      --muted:     rgba(237,233,254,0.38);
+      --border:    rgba(139,92,246,0.18);
+      --glow:      rgba(139,92,246,0.12);
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Space Grotesk', sans-serif;
       background: var(--bg);
       min-height: 100vh;
       display: flex;
@@ -32,101 +32,212 @@
       align-items: center;
       justify-content: center;
       color: var(--text);
-      padding: 32px 24px;
+      padding: 32px 20px;
+      overflow-x: hidden;
     }
 
-    /* ── Header ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(109,40,217,0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    * { position: relative; z-index: 1; }
+
     header {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 40px;
     }
+
+    .header-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--purple);
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+      background: rgba(139,92,246,0.06);
+    }
+    .header-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
     header h1 {
-      font-size: 1.75rem;
+      font-size: 2.4rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #e0aaff, #c026d3);
+      letter-spacing: -1px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ede9fe 30%, #d946ef);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     header p {
-      margin-top: 6px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
       letter-spacing: 3px;
       text-transform: uppercase;
-      font-weight: 500;
     }
 
-    /* ── Main layout ── */
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2px;
+    .main-card {
       width: 100%;
-      max-width: 1080px;
-      background: var(--border);
+      max-width: 1100px;
+      border: 1px solid var(--border);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+      background: var(--card);
+      box-shadow:
+        0 0 0 1px rgba(139,92,246,0.08),
+        0 40px 100px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    .col {
-      background: var(--card);
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .top-bar-dots { display: flex; gap: 7px; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .top-bar-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+    }
+
+    .top-bar-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--cyan);
+      border: 1px solid rgba(34,211,238,0.25);
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: 1px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .col-left {
       padding: 32px;
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .col-left  { border-radius: 20px 0 0 20px; }
     .col-right {
-      border-radius: 0 20px 20px 0;
-      background: var(--surface);
-      justify-content: center;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: rgba(0,0,0,0.2);
     }
 
-    /* ── Section label ── */
-    .section-label {
-      font-size: 0.7rem;
-      font-weight: 600;
+    .col-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--muted);
+    }
+    .col-label::before {
+      content: '';
+      display: block;
+      width: 3px; height: 14px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, var(--purple), var(--pink));
     }
 
-    /* ── Mode tabs ── */
     .mode-tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
+      gap: 6px;
     }
     .mode-tab {
-      padding: 10px;
-      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
       background: transparent;
-      color: var(--text-muted);
-      font-family: 'Inter', sans-serif;
+      color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
       font-size: 0.82rem;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
       letter-spacing: 0.3px;
     }
     .mode-tab.active {
-      background: linear-gradient(135deg, var(--purple), var(--accent));
-      color: #fff;
+      background: rgba(139,92,246,0.15);
+      border-color: var(--purple);
+      color: var(--text);
+      box-shadow: 0 0 16px rgba(139,92,246,0.15);
+    }
+    .mode-tab:not(.active):hover {
+      border-color: rgba(139,92,246,0.35);
+      color: var(--text);
     }
 
-    /* ── Preview ── */
     .preview {
       width: 100%;
       aspect-ratio: 4/3;
       border-radius: 12px;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
       border: 1px solid var(--border);
       overflow: hidden;
       display: flex;
@@ -134,263 +245,333 @@
       justify-content: center;
       position: relative;
     }
+    .preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+    }
     .preview canvas,
     .preview img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      position: relative;
+      z-index: 2;
     }
     .preview-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      color: var(--text-muted);
+      gap: 14px;
+      color: var(--muted);
+      z-index: 2;
     }
-    .preview-empty svg { width: 48px; height: 48px; opacity: 0.5; }
-    .preview-empty span { font-size: 0.8rem; }
+    .preview-empty svg { width: 44px; height: 44px; }
+    .preview-empty span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
 
-    /* ── Drop zone ── */
+    .preview-corner {
+      position: absolute;
+      width: 16px; height: 16px;
+      z-index: 3;
+    }
+    .preview-corner.tl { top: 8px;  left: 8px;  border-top: 2px solid var(--purple); border-left: 2px solid var(--purple); }
+    .preview-corner.tr { top: 8px;  right: 8px; border-top: 2px solid var(--purple); border-right: 2px solid var(--purple); }
+    .preview-corner.bl { bottom: 8px; left: 8px;  border-bottom: 2px solid var(--purple); border-left: 2px solid var(--purple); }
+    .preview-corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--purple); border-right: 2px solid var(--purple); }
+
     .drop-zone {
-      border: 1px dashed var(--border-hi);
+      border: 1px dashed rgba(139,92,246,0.35);
       border-radius: 10px;
-      padding: 20px;
+      padding: 18px;
       text-align: center;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
+      transition: all 0.2s;
+      background: rgba(139,92,246,0.03);
     }
     .drop-zone:hover, .drop-zone.dragover {
-      background: rgba(124, 58, 237, 0.08);
-      border-color: var(--purple-hi);
+      background: rgba(139,92,246,0.08);
+      border-color: var(--purple);
+      box-shadow: 0 0 20px rgba(139,92,246,0.1);
     }
-    .drop-zone svg { width: 28px; height: 28px; opacity: 0.5; margin-bottom: 8px; }
-    .drop-zone p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-    .drop-zone strong { color: var(--purple-hi); font-weight: 600; }
+    .drop-zone svg { width: 24px; height: 24px; opacity: 0.45; margin-bottom: 8px; color: var(--purple); }
+    .drop-zone p { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+    .drop-zone strong { color: var(--purple); font-weight: 600; }
     #file-input { display: none; }
 
-    /* ── Buttons ── */
     .btn {
       width: 100%;
-      padding: 13px;
-      border-radius: 10px;
+      padding: 12px 20px;
+      border-radius: 8px;
       border: none;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      letter-spacing: 0.3px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
     }
-    .btn-fill {
-      background: linear-gradient(135deg, var(--purple), var(--accent));
+    .btn-primary {
+      background: linear-gradient(135deg, var(--violet), var(--pink));
       color: #fff;
-      box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+      box-shadow: 0 4px 24px rgba(109,40,217,0.35);
     }
-    .btn-fill:hover   { opacity: 0.88; transform: translateY(-1px); }
-    .btn-fill:active  { transform: translateY(0); }
-    .btn-fill:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-primary:hover   { box-shadow: 0 6px 32px rgba(109,40,217,0.5); transform: translateY(-1px); }
+    .btn-primary:active  { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    .btn-outline {
+    .btn-ghost {
       background: transparent;
-      border: 1px solid var(--border-hi);
-      color: var(--text-muted);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-top: 8px;
     }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-ghost:hover { border-color: rgba(139,92,246,0.4); color: var(--text); }
 
-    /* ── Status ── */
     .status {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
       text-align: center;
-      min-height: 18px;
+      letter-spacing: 1px;
+      min-height: 16px;
     }
+    .status.active-status { color: var(--cyan); }
 
-    /* ── Right panel: idle state ── */
     .idle-state {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 16px;
-      padding: 40px 20px;
       text-align: center;
-      color: var(--text-muted);
+      padding: 40px 20px;
     }
-    .idle-state svg { width: 56px; height: 56px; opacity: 0.2; }
-    .idle-state p { font-size: 0.85rem; line-height: 1.6; max-width: 220px; }
+    .idle-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(139,92,246,0.05);
+    }
+    .idle-icon svg { width: 28px; height: 28px; color: var(--muted); }
+    .idle-state p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 200px;
+    }
 
     /* ── Results ── */
-    .results { display: none; flex-direction: column; gap: 24px; }
+    .results { display: none; flex-direction: column; gap: 20px; }
     .results.visible { display: flex; }
 
-    .result-item { display: flex; flex-direction: column; gap: 8px; }
+    /* ── Bars ── */
+    .bar-item { display: flex; flex-direction: column; gap: 8px; }
 
-    .result-header {
+    .bar-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
     }
-    .result-name {
-      font-size: 0.88rem;
+    .bar-name {
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text);
     }
-    .result-pct {
-      font-size: 0.88rem;
+    .bar-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: var(--purple-hi);
-      font-variant-numeric: tabular-nums;
+      color: var(--purple);
     }
 
     .bar-track {
-      height: 8px;
-      background: var(--bar-bg);
+      height: 6px;
+      background: rgba(255,255,255,0.05);
       border-radius: 99px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
     }
     .bar-fill {
       height: 100%;
       border-radius: 99px;
-      background: linear-gradient(90deg, var(--purple), var(--accent));
-      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+      background: linear-gradient(90deg, var(--violet), var(--pink));
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 10px rgba(217,70,239,0.4);
     }
 
-    /* ── Winner card ── */
     .winner {
-      margin-top: 8px;
       border-radius: 14px;
-      padding: 24px;
-      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(192,38,211,0.25));
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 28px 24px;
+      background: linear-gradient(135deg, rgba(109,40,217,0.2), rgba(217,70,239,0.15));
+      border: 1px solid rgba(139,92,246,0.3);
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .winner-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 3px;
+    .winner::before {
+      content: '';
+      position: absolute;
+      top: -40px; left: 50%;
+      transform: translateX(-50%);
+      width: 160px; height: 80px;
+      background: radial-gradient(ellipse, rgba(217,70,239,0.25), transparent 70%);
+      pointer-events: none;
+    }
+    .winner-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      color: var(--purple-hi);
-      margin-bottom: 10px;
+      color: var(--pink);
+      margin-bottom: 12px;
     }
     .winner-name {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      color: #fff;
       letter-spacing: -0.5px;
+      color: #fff;
     }
     .winner-conf {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      margin-top: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .winner-conf span {
+      color: var(--cyan);
+      font-weight: 700;
     }
 
-    /* ── Divider ── */
-    .divider {
+    .sep {
       height: 1px;
-      background: var(--border);
-      margin: 4px 0;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
 
-    /* ── Responsive ── */
     @media (max-width: 720px) {
-      .layout { grid-template-columns: 1fr; }
-      .col-left  { border-radius: 20px 20px 0 0; }
-      .col-right { border-radius: 0 0 20px 20px; }
+      .columns { grid-template-columns: 1fr; }
+      .col-left { border-right: none; border-bottom: 1px solid var(--border); }
     }
   </style>
 </head>
 <body>
 
   <header>
+    <div class="header-tag">Vision AI &nbsp;·&nbsp; Teachable Machine</div>
     <h1>Clasificador de Uvas</h1>
     <p>Italia &nbsp;&middot;&nbsp; Quebranta</p>
   </header>
 
-  <div class="layout">
+  <div class="main-card">
 
-    <!-- ── LEFT: Input ── -->
-    <div class="col col-left">
-      <span class="section-label">Entrada</span>
-
-      <div class="mode-tabs">
-        <button class="mode-tab active" id="tab-cam" onclick="switchMode('camera')">Camara en vivo</button>
-        <button class="mode-tab"        id="tab-img" onclick="switchMode('upload')">Subir imagen</button>
+    <div class="top-bar">
+      <div class="top-bar-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
       </div>
-
-      <!-- Preview -->
-      <div class="preview" id="preview-box">
-        <div class="preview-empty" id="preview-empty">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <span>La imagen aparecera aqui</span>
-        </div>
-        <img id="uploaded-img" style="display:none" alt="imagen"/>
-      </div>
-
-      <!-- Camera controls -->
-      <div id="cam-controls">
-        <button class="btn btn-fill" id="cam-btn" onclick="initCamera()">Iniciar camara</button>
-        <button class="btn btn-outline" id="cam-stop" style="display:none;margin-top:10px" onclick="stopCamera()">Detener camara</button>
-      </div>
-
-      <!-- Upload controls -->
-      <div id="upload-controls" style="display:none; flex-direction:column; gap:12px;">
-        <label class="drop-zone" id="drop-zone" for="file-input">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <polyline points="16 16 12 12 8 16"/>
-            <line x1="12" y1="12" x2="12" y2="21"/>
-            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
-          </svg>
-          <p>Arrastra una imagen o <strong>haz clic para seleccionar</strong></p>
-          <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
-        </label>
-        <button class="btn btn-fill" id="img-btn" onclick="classifyImage()" disabled>Clasificar</button>
-      </div>
-
-      <p class="status" id="status-msg"></p>
+      <span class="top-bar-title">grape-classifier.html</span>
+      <span class="top-bar-badge">MODELO ACTIVO</span>
     </div>
 
-    <!-- ── RIGHT: Results ── -->
-    <div class="col col-right">
-      <span class="section-label">Clasificacion</span>
+    <div class="columns">
 
-      <!-- Idle -->
-      <div class="idle-state" id="idle-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <p>Inicia la camara o sube una imagen para ver los resultados</p>
+      <div class="col-left">
+        <span class="col-label">Entrada de imagen</span>
+
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="tab-cam" onclick="switchMode('camera')">Camara en vivo</button>
+          <button class="mode-tab"        id="tab-img" onclick="switchMode('upload')">Subir imagen</button>
+        </div>
+
+        <div class="preview" id="preview-box">
+          <div class="preview-corner tl"></div>
+          <div class="preview-corner tr"></div>
+          <div class="preview-corner bl"></div>
+          <div class="preview-corner br"></div>
+          <div class="preview-empty" id="preview-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Sin imagen</span>
+          </div>
+          <img id="uploaded-img" style="display:none" alt="imagen"/>
+        </div>
+
+        <div id="cam-controls">
+          <button class="btn btn-primary" id="cam-btn" onclick="initCamera()">Iniciar camara</button>
+          <button class="btn btn-ghost"   id="cam-stop" style="display:none" onclick="stopCamera()">Detener camara</button>
+        </div>
+
+        <div id="upload-controls" style="display:none; flex-direction:column; gap:10px;">
+          <label class="drop-zone" id="drop-zone" for="file-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="16 16 12 12 8 16"/>
+              <line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+            <p>Arrastra una imagen o <strong>haz clic para seleccionar</strong></p>
+            <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
+          </label>
+          <button class="btn btn-primary" id="img-btn" onclick="classifyImage()" disabled>Analizar imagen</button>
+        </div>
+
+        <p class="status" id="status-msg"></p>
       </div>
+      
+      <div class="col-right">
+        <span class="col-label">Resultado del analisis</span>
 
-      <!-- Results -->
-      <div class="results" id="results-panel">
-        <div id="bars-container"></div>
-        <div class="divider"></div>
-        <div class="winner" id="winner-card">
-          <div class="winner-label">Resultado</div>
-          <div class="winner-name" id="winner-name">—</div>
-          <div class="winner-conf" id="winner-conf"></div>
+        <div class="idle-state" id="idle-state">
+          <div class="idle-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <p>Inicia la camara o sube una imagen para ver el analisis</p>
+        </div>
+
+        <div class="results" id="results-panel">
+          <div id="bars-container" style="display:flex; flex-direction:column; gap:16px;"></div>
+          <div class="sep"></div>
+          <div class="winner" id="winner-card">
+            <div class="winner-tag">Clasificacion final</div>
+            <div class="winner-name" id="winner-name">—</div>
+            <div class="winner-conf" id="winner-conf"></div>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script>
     const MODEL_URL = "https://teachablemachine.withgoogle.com/models/taJCbfxNC/";
-    let model, webcam, rafId, mode = 'camera';
+    let model, webcam, rafId;
 
     function switchMode(m) {
-      mode = m;
       document.getElementById('tab-cam').classList.toggle('active', m === 'camera');
       document.getElementById('tab-img').classList.toggle('active', m === 'upload');
-      document.getElementById('cam-controls').style.display    = m === 'camera' ? 'block'  : 'none';
-      document.getElementById('upload-controls').style.display = m === 'upload' ? 'flex'   : 'none';
+      document.getElementById('cam-controls').style.display    = m === 'camera' ? 'block' : 'none';
+      document.getElementById('upload-controls').style.display = m === 'upload' ? 'flex'  : 'none';
       if (m !== 'camera') stopCamera();
       resetPreview();
       hideResults();
@@ -401,13 +582,16 @@
       model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
     }
 
-    function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
+    function setStatus(msg, active = false) {
+      const el = document.getElementById('status-msg');
+      el.textContent = msg;
+      el.className = 'status' + (active ? ' active-status' : '');
+    }
 
     function resetPreview() {
       document.getElementById('preview-empty').style.display = 'flex';
       const img = document.getElementById('uploaded-img');
-      img.style.display = 'none';
-      img.src = '';
+      img.style.display = 'none'; img.src = '';
     }
 
     function showResults() {
@@ -425,10 +609,10 @@
       c.innerHTML = '';
       predictions.forEach((p, i) => {
         c.innerHTML += `
-          <div class="result-item">
-            <div class="result-header">
-              <span class="result-name" id="lbl-${i}">${p.className}</span>
-              <span class="result-pct"  id="pct-${i}">0%</span>
+          <div class="bar-item">
+            <div class="bar-header">
+              <span class="bar-name" id="lbl-${i}">${p.className}</span>
+              <span class="bar-pct"  id="pct-${i}">0%</span>
             </div>
             <div class="bar-track"><div class="bar-fill" id="bar-${i}" style="width:0%"></div></div>
           </div>`;
@@ -439,40 +623,38 @@
       let best = predictions[0];
       predictions.forEach((p, i) => {
         const pct = Math.round(p.probability * 100);
+        document.getElementById(`lbl-${i}`).textContent = p.className;
         document.getElementById(`pct-${i}`).textContent = pct + '%';
         document.getElementById(`bar-${i}`).style.width = pct + '%';
         if (p.probability > best.probability) best = p;
       });
       document.getElementById('winner-name').textContent = best.className;
-      document.getElementById('winner-conf').textContent = Math.round(best.probability * 100) + '% de confianza';
+      document.getElementById('winner-conf').innerHTML =
+        'Confianza: <span>' + Math.round(best.probability * 100) + '%</span>';
     }
 
-    /* ── CAMERA ── */
     async function initCamera() {
       const btn = document.getElementById('cam-btn');
       btn.disabled = true;
-      setStatus('Cargando modelo...');
+      setStatus('Cargando modelo...', true);
       await loadModel();
 
       webcam = new tmImage.Webcam(480, 360, true);
       await webcam.setup();
       await webcam.play();
 
-      const box = document.getElementById('preview-box');
       document.getElementById('preview-empty').style.display = 'none';
-      box.appendChild(webcam.canvas);
+      document.getElementById('preview-box').appendChild(webcam.canvas);
 
-      buildBars(Array.from({length: model.getTotalClasses()}, (_, i) => ({className: '', probability: 0})));
+      buildBars(Array.from({length: model.getTotalClasses()}, () => ({className: '', probability: 0})));
       showResults();
       document.getElementById('cam-stop').style.display = 'block';
       btn.style.display = 'none';
-      setStatus('Clasificando en tiempo real...');
+      setStatus('Analizando en tiempo real...', true);
 
       async function loop() {
         webcam.update();
         const preds = await model.predict(webcam.canvas);
-        if (document.getElementById('bars-container').children.length === 0) buildBars(preds);
-        // update labels first time
         preds.forEach((p, i) => { document.getElementById(`lbl-${i}`).textContent = p.className; });
         updateBars(preds);
         rafId = requestAnimationFrame(loop);
@@ -484,8 +666,8 @@
       if (rafId) cancelAnimationFrame(rafId);
       if (webcam) {
         webcam.stop();
-        const canvas = document.getElementById('preview-box').querySelector('canvas');
-        if (canvas) canvas.remove();
+        const c = document.getElementById('preview-box').querySelector('canvas');
+        if (c) c.remove();
         webcam = null;
       }
       document.getElementById('preview-empty').style.display = 'flex';
@@ -496,7 +678,6 @@
       setStatus('');
     }
 
-    /* ── UPLOAD ── */
     const dz = document.getElementById('drop-zone');
     dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('dragover'); });
     dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
@@ -517,7 +698,7 @@
         document.getElementById('preview-empty').style.display = 'none';
         document.getElementById('img-btn').disabled = false;
         hideResults();
-        setStatus('Imagen lista.');
+        setStatus('Imagen cargada. Lista para analizar.');
       };
       reader.readAsDataURL(file);
     }
@@ -525,15 +706,15 @@
     async function classifyImage() {
       const btn = document.getElementById('img-btn');
       btn.disabled = true;
-      setStatus('Cargando modelo...');
+      setStatus('Cargando modelo...', true);
       await loadModel();
-      setStatus('Clasificando...');
+      setStatus('Analizando imagen...', true);
       const preds = await model.predict(document.getElementById('uploaded-img'));
       buildBars(preds);
       showResults();
       updateBars(preds);
       btn.disabled = false;
-      setStatus('Clasificacion completada.');
+      setStatus('Analisis completado.');
     }
   </script>
 </body>
