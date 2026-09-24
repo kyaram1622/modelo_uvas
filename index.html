@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clasificador de Uvas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #4a0e8f, #7b2d8b);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    h1 { font-size: 1.8rem; margin-bottom: 8px; }
+    p.subtitle { opacity: 0.8; margin-bottom: 24px; font-size: 0.95rem; }
+
+    #webcam-container canvas {
+      border-radius: 12px;
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 32px;
+      background: #fff;
+      color: #4a0e8f;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    button:hover { transform: scale(1.05); opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    #results {
+      margin-top: 24px;
+      display: none;
+    }
+
+    .result-item {
+      margin: 10px 0;
+    }
+
+    .result-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .bar-bg {
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      height: 12px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: #fff;
+      transition: width 0.3s ease;
+    }
+
+    #prediction {
+      margin-top: 16px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🍇 Clasificador de Uvas</h1>
+    <p class="subtitle">Detecta si son uvas <strong>Italia</strong> o <strong>Quebranta</strong></p>
+
+    <div id="webcam-container"></div>
+
+    <button id="btn" onclick="init()">Iniciar cámara</button>
+
+    <div id="results">
+      <div id="label-container"></div>
+      <div id="prediction"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script>
+    const URL = "https://teachablemachine.withgoogle.com/models/taJCbfxNC/";
+    let model, webcam, maxPredictions;
+
+    async function init() {
+      const btn = document.getElementById("btn");
+      btn.disabled = true;
+      btn.textContent = "Cargando...";
+
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      webcam = new tmImage.Webcam(300, 300, true);
+      await webcam.setup();
+      await webcam.play();
+
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
+      document.getElementById("results").style.display = "block";
+      btn.style.display = "none";
+
+      buildBars();
+      window.requestAnimationFrame(loop);
+    }
+
+    function buildBars() {
+      const container = document.getElementById("label-container");
+      container.innerHTML = "";
+      for (let i = 0; i < maxPredictions; i++) {
+        container.innerHTML += `
+          <div class="result-item" id="item-${i}">
+            <div class="result-label">
+              <span id="label-${i}"></span>
+              <span id="pct-${i}">0%</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" id="bar-${i}" style="width:0%"></div></div>
+          </div>`;
+      }
+    }
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      const predictions = await model.predict(webcam.canvas);
+      let best = predictions[0];
+
+      predictions.forEach((p, i) => {
+        const pct = Math.round(p.probability * 100);
+        document.getElementById(`label-${i}`).textContent = p.className;
+        document.getElementById(`pct-${i}`).textContent = pct + "%";
+        document.getElementById(`bar-${i}`).style.width = pct + "%";
+        if (p.probability > best.probability) best = p;
+      });
+
+      document.getElementById("prediction").textContent = "🍇 " + best.className;
+    }
+  </script>
+</body>
+</html>
