@@ -30,6 +30,15 @@
       color: #fff;
     }
 
+    /* ── Layout wrapper ── */
+    .app-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     /* ── Header ── */
     header {
       text-align: center;
@@ -75,13 +84,22 @@
       border-radius: 24px;
       padding: 32px;
       width: 100%;
-      max-width: 500px;
+      max-width: 1100px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
 
     /* ── Panels ── */
-    .panel { display: none; flex-direction: column; align-items: center; gap: 20px; }
-    .panel.active { display: flex; }
+    .panel { display: none; }
+    .panel.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .panel-left  { display: flex; flex-direction: column; gap: 16px; }
+    .panel-right { display: flex; flex-direction: column; gap: 16px; justify-content: center; }
 
     /* ── Preview area ── */
     .preview-box {
@@ -95,6 +113,7 @@
       justify-content: center;
       position: relative;
       border: 2px dashed var(--glass-border);
+      max-height: 420px;
     }
     .preview-box canvas,
     .preview-box img {
@@ -171,10 +190,18 @@
       width: 100%;
       background: rgba(0,0,0,0.25);
       border-radius: 16px;
-      padding: 20px;
+      padding: 24px;
       display: none;
     }
     .results-box.visible { display: block; }
+
+    .results-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.5;
+      margin-bottom: 20px;
+    }
 
     .result-item { margin-bottom: 14px; }
     .result-item:last-child { margin-bottom: 0; }
@@ -201,14 +228,29 @@
     }
 
     .winner-badge {
-      margin-top: 16px;
+      margin-top: 20px;
       text-align: center;
       background: linear-gradient(135deg, var(--purple-mid), var(--accent));
-      border-radius: 50px;
-      padding: 12px 20px;
-      font-size: 1.05rem;
+      border-radius: 16px;
+      padding: 18px 20px;
+      font-size: 1.2rem;
       font-weight: 700;
       box-shadow: 0 4px 20px rgba(180,79,232,0.4);
+      letter-spacing: 0.5px;
+    }
+    .winner-badge small {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 400;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .panel.active { grid-template-columns: 1fr; }
     }
 
     /* ── Status ── */
@@ -221,73 +263,86 @@
 </head>
 <body>
 
-  <header>
-    <span class="emoji">🍇</span>
-    <h1>Clasificador de Uvas</h1>
-    <p>Italia &nbsp;·&nbsp; Quebranta</p>
-  </header>
+  <div class="app-wrapper">
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('camera')">📷 Cámara</button>
-    <button class="tab"        onclick="switchTab('upload')">🖼️ Imagen</button>
-  </div>
+    <header>
+      <h1>Clasificador de Uvas</h1>
+      <p>Italia &nbsp;·&nbsp; Quebranta</p>
+    </header>
 
-  <div class="card">
-
-    <!-- ── CAMERA PANEL ── -->
-    <div class="panel active" id="panel-camera">
-      <div class="preview-box" id="cam-preview">
-        <div class="preview-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <span>La cámara aparecerá aquí</span>
-        </div>
-      </div>
-
-      <div class="results-box" id="cam-results">
-        <div id="cam-label-container"></div>
-        <div class="winner-badge" id="cam-winner"></div>
-      </div>
-
-      <button class="btn-primary" id="cam-btn" onclick="initCamera()">Iniciar cámara</button>
-      <button class="btn-secondary" id="cam-stop-btn" style="display:none" onclick="stopCamera()">Detener cámara</button>
-      <p class="status" id="cam-status"></p>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('camera')">📷 Cámara</button>
+      <button class="tab"        onclick="switchTab('upload')">🖼️ Imagen</button>
     </div>
 
-    <!-- ── UPLOAD PANEL ── -->
-    <div class="panel" id="panel-upload">
-      <div class="preview-box" id="img-preview">
-        <div class="preview-placeholder" id="img-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <span>Vista previa</span>
+    <div class="card">
+
+      <!-- ── CAMERA PANEL ── -->
+      <div class="panel active" id="panel-camera">
+
+        <div class="panel-left">
+          <div class="preview-box" id="cam-preview">
+            <div class="preview-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>La cámara aparecerá aquí</span>
+            </div>
+          </div>
+          <button class="btn-primary" id="cam-btn" onclick="initCamera()">Iniciar cámara</button>
+          <button class="btn-secondary" id="cam-stop-btn" style="display:none" onclick="stopCamera()">Detener cámara</button>
+          <p class="status" id="cam-status"></p>
         </div>
-        <img id="uploaded-img" style="display:none" alt="imagen subida"/>
+
+        <div class="panel-right">
+          <div class="results-box" id="cam-results">
+            <p class="results-title">Resultados</p>
+            <div id="cam-label-container"></div>
+            <div class="winner-badge" id="cam-winner"><small>Clasificación</small>—</div>
+          </div>
+        </div>
+
       </div>
 
-      <label class="drop-zone" id="drop-zone" for="file-input">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
-          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
-        </svg>
-        <p>Arrastra una imagen aquí o <strong>haz clic para seleccionar</strong></p>
-        <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
-      </label>
+      <!-- ── UPLOAD PANEL ── -->
+      <div class="panel" id="panel-upload">
 
-      <div class="results-box" id="img-results">
-        <div id="img-label-container"></div>
-        <div class="winner-badge" id="img-winner"></div>
+        <div class="panel-left">
+          <div class="preview-box" id="img-preview">
+            <div class="preview-placeholder" id="img-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>Vista previa</span>
+            </div>
+            <img id="uploaded-img" style="display:none" alt="imagen subida"/>
+          </div>
+          <label class="drop-zone" id="drop-zone" for="file-input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+            <p>Arrastra una imagen aquí o <strong>haz clic para seleccionar</strong></p>
+            <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
+          </label>
+          <button class="btn-primary" id="img-btn" onclick="classifyImage()" disabled>Clasificar imagen</button>
+          <p class="status" id="img-status"></p>
+        </div>
+
+        <div class="panel-right">
+          <div class="results-box" id="img-results">
+            <p class="results-title">Resultados</p>
+            <div id="img-label-container"></div>
+            <div class="winner-badge" id="img-winner"><small>Clasificación</small>—</div>
+          </div>
+        </div>
+
       </div>
 
-      <button class="btn-primary" id="img-btn" onclick="classifyImage()" disabled>Clasificar imagen</button>
-      <p class="status" id="img-status"></p>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
@@ -334,7 +389,7 @@
         document.getElementById(`${containerId}-bar-${i}`).style.width = pct + '%';
         if (p.probability > best.probability) best = p;
       });
-      document.getElementById(winnerId).textContent = '🍇 ' + best.className;
+      document.getElementById(winnerId).innerHTML = '<small>Clasificación</small>🍇 ' + best.className;
     }
 
     // ── CAMERA ──
@@ -356,6 +411,7 @@
 
       buildBars('cam-label-container', model.getTotalClasses());
       document.getElementById('cam-results').classList.add('visible');
+      document.getElementById('cam-winner').innerHTML = '<small>Clasificación</small>Analizando…';
       document.getElementById('cam-stop-btn').style.display = 'inline-block';
       btn.style.display = 'none';
       status.textContent = 'Clasificando en tiempo real…';
