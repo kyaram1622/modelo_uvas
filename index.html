@@ -1,425 +1,480 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clasificador de Uvas 🍇</title>
+  <title>Clasificador de Uvas</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --purple-dark: #2d0057;
-      --purple-mid:  #6a0dad;
-      --purple-light:#b44fe8;
-      --accent:      #e040fb;
-      --glass:       rgba(255,255,255,0.08);
-      --glass-border:rgba(255,255,255,0.18);
+      --bg:          #0a0010;
+      --surface:     #110018;
+      --card:        #1a0028;
+      --border:      rgba(160, 80, 220, 0.2);
+      --border-hi:   rgba(160, 80, 220, 0.5);
+      --purple:      #7c3aed;
+      --purple-hi:   #a855f7;
+      --accent:      #c026d3;
+      --text:        #f0e6ff;
+      --text-muted:  rgba(240, 230, 255, 0.45);
+      --bar-bg:      rgba(255,255,255,0.07);
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(145deg, var(--purple-dark) 0%, #1a003a 50%, #0d001f 100%);
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      color: #fff;
-    }
-
-    /* ── Layout wrapper ── */
-    .app-wrapper {
-      width: 100%;
-      max-width: 1100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      color: var(--text);
+      padding: 32px 24px;
     }
 
     /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 36px;
     }
-    header .emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; }
-    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: 1px; }
-    header p  { opacity: 0.65; font-size: 0.9rem; margin-top: 4px; }
-
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 50px;
-      padding: 6px;
-      margin-bottom: 28px;
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #e0aaff, #c026d3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .tab {
-      padding: 10px 28px;
-      border-radius: 50px;
-      border: none;
-      background: transparent;
-      color: rgba(255,255,255,0.6);
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .tab.active {
-      background: linear-gradient(135deg, var(--purple-mid), var(--accent));
-      color: #fff;
-      box-shadow: 0 4px 18px rgba(180,79,232,0.45);
+    header p {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
     }
 
-    /* ── Card ── */
-    .card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(18px);
-      border-radius: 24px;
-      padding: 32px;
-      width: 100%;
-      max-width: 1100px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-
-    /* ── Panels ── */
-    .panel { display: none; }
-    .panel.active {
+    /* ── Main layout ── */
+    .layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto;
-      gap: 28px;
-      align-items: start;
+      gap: 2px;
+      width: 100%;
+      max-width: 1080px;
+      background: var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
     }
 
-    .panel-left  { display: flex; flex-direction: column; gap: 16px; }
-    .panel-right { display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+    .col {
+      background: var(--card);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-    /* ── Preview area ── */
-    .preview-box {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 16px;
+    .col-left  { border-radius: 20px 0 0 20px; }
+    .col-right {
+      border-radius: 0 20px 20px 0;
+      background: var(--surface);
+      justify-content: center;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Mode tabs ── */
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
-      background: rgba(0,0,0,0.35);
+    }
+    .mode-tab {
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .mode-tab.active {
+      background: linear-gradient(135deg, var(--purple), var(--accent));
+      color: #fff;
+    }
+
+    /* ── Preview ── */
+    .preview {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      border: 2px dashed var(--glass-border);
-      max-height: 420px;
     }
-    .preview-box canvas,
-    .preview-box img {
+    .preview canvas,
+    .preview img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 14px;
     }
-    .preview-placeholder {
+    .preview-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      opacity: 0.4;
-      pointer-events: none;
+      gap: 12px;
+      color: var(--text-muted);
     }
-    .preview-placeholder svg { width: 56px; height: 56px; }
-    .preview-placeholder span { font-size: 0.85rem; }
+    .preview-empty svg { width: 48px; height: 48px; opacity: 0.5; }
+    .preview-empty span { font-size: 0.8rem; }
 
-    /* ── Buttons ── */
-    .btn-primary {
-      width: 100%;
-      padding: 14px;
-      border-radius: 50px;
-      border: none;
-      background: linear-gradient(135deg, var(--purple-mid), var(--accent));
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(180,79,232,0.4);
-    }
-    .btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(180,79,232,0.55); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
-
-    .btn-secondary {
-      padding: 10px 24px;
-      border-radius: 50px;
-      border: 1px solid var(--glass-border);
-      background: var(--glass);
-      color: rgba(255,255,255,0.8);
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-
-    /* ── Upload drop zone ── */
+    /* ── Drop zone ── */
     .drop-zone {
-      width: 100%;
-      border: 2px dashed var(--purple-light);
-      border-radius: 16px;
-      padding: 28px 20px;
+      border: 1px dashed var(--border-hi);
+      border-radius: 10px;
+      padding: 20px;
       text-align: center;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
     .drop-zone:hover, .drop-zone.dragover {
-      background: rgba(180,79,232,0.12);
-      border-color: var(--accent);
+      background: rgba(124, 58, 237, 0.08);
+      border-color: var(--purple-hi);
     }
-    .drop-zone svg { width: 40px; height: 40px; opacity: 0.7; margin-bottom: 8px; }
-    .drop-zone p  { font-size: 0.88rem; opacity: 0.7; }
-    .drop-zone strong { color: var(--accent); }
+    .drop-zone svg { width: 28px; height: 28px; opacity: 0.5; margin-bottom: 8px; }
+    .drop-zone p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .drop-zone strong { color: var(--purple-hi); font-weight: 600; }
     #file-input { display: none; }
 
-    /* ── Results ── */
-    .results-box {
+    /* ── Buttons ── */
+    .btn {
       width: 100%;
-      background: rgba(0,0,0,0.25);
-      border-radius: 16px;
-      padding: 24px;
-      display: none;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.3px;
     }
-    .results-box.visible { display: block; }
+    .btn-fill {
+      background: linear-gradient(135deg, var(--purple), var(--accent));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+    }
+    .btn-fill:hover   { opacity: 0.88; transform: translateY(-1px); }
+    .btn-fill:active  { transform: translateY(0); }
+    .btn-fill:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    .results-title {
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-hi);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    /* ── Status ── */
+    .status {
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      margin-bottom: 20px;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 18px;
     }
 
-    .result-item { margin-bottom: 14px; }
-    .result-item:last-child { margin-bottom: 0; }
+    /* ── Right panel: idle state ── */
+    .idle-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .idle-state svg { width: 56px; height: 56px; opacity: 0.2; }
+    .idle-state p { font-size: 0.85rem; line-height: 1.6; max-width: 220px; }
 
-    .result-label {
+    /* ── Results ── */
+    .results { display: none; flex-direction: column; gap: 24px; }
+    .results.visible { display: flex; }
+
+    .result-item { display: flex; flex-direction: column; gap: 8px; }
+
+    .result-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+    }
+    .result-name {
       font-size: 0.88rem;
-      margin-bottom: 6px;
       font-weight: 600;
+      color: var(--text);
+    }
+    .result-pct {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--purple-hi);
+      font-variant-numeric: tabular-nums;
     }
 
-    .bar-bg {
-      background: rgba(255,255,255,0.12);
-      border-radius: 50px;
-      height: 10px;
+    .bar-track {
+      height: 8px;
+      background: var(--bar-bg);
+      border-radius: 99px;
       overflow: hidden;
     }
     .bar-fill {
       height: 100%;
-      border-radius: 50px;
-      background: linear-gradient(90deg, var(--purple-mid), var(--accent));
-      transition: width 0.35s ease;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--purple), var(--accent));
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
     }
 
-    .winner-badge {
-      margin-top: 20px;
+    /* ── Winner card ── */
+    .winner {
+      margin-top: 8px;
+      border-radius: 14px;
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(192,38,211,0.25));
+      border: 1px solid rgba(168, 85, 247, 0.3);
       text-align: center;
-      background: linear-gradient(135deg, var(--purple-mid), var(--accent));
-      border-radius: 16px;
-      padding: 18px 20px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      box-shadow: 0 4px 20px rgba(180,79,232,0.4);
-      letter-spacing: 0.5px;
     }
-    .winner-badge small {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 400;
-      opacity: 0.75;
-      margin-bottom: 4px;
+    .winner-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      color: var(--purple-hi);
+      margin-bottom: 10px;
+    }
+    .winner-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .winner-conf {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
     }
 
     /* ── Responsive ── */
-    @media (max-width: 700px) {
-      .panel.active { grid-template-columns: 1fr; }
-    }
-
-    /* ── Status ── */
-    .status {
-      font-size: 0.8rem;
-      opacity: 0.55;
-      text-align: center;
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      .col-left  { border-radius: 20px 20px 0 0; }
+      .col-right { border-radius: 0 0 20px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="app-wrapper">
+  <header>
+    <h1>Clasificador de Uvas</h1>
+    <p>Italia &nbsp;&middot;&nbsp; Quebranta</p>
+  </header>
 
-    <header>
-      <h1>Clasificador de Uvas</h1>
-      <p>Italia &nbsp;·&nbsp; Quebranta</p>
-    </header>
+  <div class="layout">
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('camera')">📷 Cámara</button>
-      <button class="tab"        onclick="switchTab('upload')">🖼️ Imagen</button>
-    </div>
+    <!-- ── LEFT: Input ── -->
+    <div class="col col-left">
+      <span class="section-label">Entrada</span>
 
-    <div class="card">
-
-      <!-- ── CAMERA PANEL ── -->
-      <div class="panel active" id="panel-camera">
-
-        <div class="panel-left">
-          <div class="preview-box" id="cam-preview">
-            <div class="preview-placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-              </svg>
-              <span>La cámara aparecerá aquí</span>
-            </div>
-          </div>
-          <button class="btn-primary" id="cam-btn" onclick="initCamera()">Iniciar cámara</button>
-          <button class="btn-secondary" id="cam-stop-btn" style="display:none" onclick="stopCamera()">Detener cámara</button>
-          <p class="status" id="cam-status"></p>
-        </div>
-
-        <div class="panel-right">
-          <div class="results-box" id="cam-results">
-            <p class="results-title">Resultados</p>
-            <div id="cam-label-container"></div>
-            <div class="winner-badge" id="cam-winner"><small>Clasificación</small>—</div>
-          </div>
-        </div>
-
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-cam" onclick="switchMode('camera')">Camara en vivo</button>
+        <button class="mode-tab"        id="tab-img" onclick="switchMode('upload')">Subir imagen</button>
       </div>
 
-      <!-- ── UPLOAD PANEL ── -->
-      <div class="panel" id="panel-upload">
-
-        <div class="panel-left">
-          <div class="preview-box" id="img-preview">
-            <div class="preview-placeholder" id="img-placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-              <span>Vista previa</span>
-            </div>
-            <img id="uploaded-img" style="display:none" alt="imagen subida"/>
-          </div>
-          <label class="drop-zone" id="drop-zone" for="file-input">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
-              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
-            </svg>
-            <p>Arrastra una imagen aquí o <strong>haz clic para seleccionar</strong></p>
-            <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
-          </label>
-          <button class="btn-primary" id="img-btn" onclick="classifyImage()" disabled>Clasificar imagen</button>
-          <p class="status" id="img-status"></p>
+      <!-- Preview -->
+      <div class="preview" id="preview-box">
+        <div class="preview-empty" id="preview-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span>La imagen aparecera aqui</span>
         </div>
-
-        <div class="panel-right">
-          <div class="results-box" id="img-results">
-            <p class="results-title">Resultados</p>
-            <div id="img-label-container"></div>
-            <div class="winner-badge" id="img-winner"><small>Clasificación</small>—</div>
-          </div>
-        </div>
-
+        <img id="uploaded-img" style="display:none" alt="imagen"/>
       </div>
 
+      <!-- Camera controls -->
+      <div id="cam-controls">
+        <button class="btn btn-fill" id="cam-btn" onclick="initCamera()">Iniciar camara</button>
+        <button class="btn btn-outline" id="cam-stop" style="display:none;margin-top:10px" onclick="stopCamera()">Detener camara</button>
+      </div>
+
+      <!-- Upload controls -->
+      <div id="upload-controls" style="display:none; flex-direction:column; gap:12px;">
+        <label class="drop-zone" id="drop-zone" for="file-input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="16 16 12 12 8 16"/>
+            <line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+          <p>Arrastra una imagen o <strong>haz clic para seleccionar</strong></p>
+          <input type="file" id="file-input" accept="image/*" onchange="handleFile(event)"/>
+        </label>
+        <button class="btn btn-fill" id="img-btn" onclick="classifyImage()" disabled>Clasificar</button>
+      </div>
+
+      <p class="status" id="status-msg"></p>
     </div>
+
+    <!-- ── RIGHT: Results ── -->
+    <div class="col col-right">
+      <span class="section-label">Clasificacion</span>
+
+      <!-- Idle -->
+      <div class="idle-state" id="idle-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <p>Inicia la camara o sube una imagen para ver los resultados</p>
+      </div>
+
+      <!-- Results -->
+      <div class="results" id="results-panel">
+        <div id="bars-container"></div>
+        <div class="divider"></div>
+        <div class="winner" id="winner-card">
+          <div class="winner-label">Resultado</div>
+          <div class="winner-name" id="winner-name">—</div>
+          <div class="winner-conf" id="winner-conf"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
   <script>
     const MODEL_URL = "https://teachablemachine.withgoogle.com/models/taJCbfxNC/";
-    let model, webcam, rafId;
-    let currentTab = 'camera';
+    let model, webcam, rafId, mode = 'camera';
 
-    // ── Tab switching ──
-    function switchTab(tab) {
-      currentTab = tab;
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'camera')));
-      document.getElementById('panel-camera').classList.toggle('active', tab === 'camera');
-      document.getElementById('panel-upload').classList.toggle('active', tab === 'upload');
-      if (tab !== 'camera') stopCamera();
+    function switchMode(m) {
+      mode = m;
+      document.getElementById('tab-cam').classList.toggle('active', m === 'camera');
+      document.getElementById('tab-img').classList.toggle('active', m === 'upload');
+      document.getElementById('cam-controls').style.display    = m === 'camera' ? 'block'  : 'none';
+      document.getElementById('upload-controls').style.display = m === 'upload' ? 'flex'   : 'none';
+      if (m !== 'camera') stopCamera();
+      resetPreview();
+      hideResults();
     }
 
-    // ── Load model (shared) ──
     async function loadModel() {
       if (model) return;
       model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
     }
 
-    // ── Build result bars ──
-    function buildBars(containerId, count, classes) {
-      const c = document.getElementById(containerId);
-      c.innerHTML = '';
-      for (let i = 0; i < count; i++) {
-        c.innerHTML += `
-          <div class="result-item">
-            <div class="result-label"><span id="${containerId}-lbl-${i}">${classes ? classes[i] : ''}</span><span id="${containerId}-pct-${i}">0%</span></div>
-            <div class="bar-bg"><div class="bar-fill" id="${containerId}-bar-${i}" style="width:0%"></div></div>
-          </div>`;
-      }
+    function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
+
+    function resetPreview() {
+      document.getElementById('preview-empty').style.display = 'flex';
+      const img = document.getElementById('uploaded-img');
+      img.style.display = 'none';
+      img.src = '';
     }
 
-    function updateBars(containerId, predictions, winnerId) {
+    function showResults() {
+      document.getElementById('idle-state').style.display = 'none';
+      document.getElementById('results-panel').classList.add('visible');
+    }
+
+    function hideResults() {
+      document.getElementById('idle-state').style.display = 'flex';
+      document.getElementById('results-panel').classList.remove('visible');
+    }
+
+    function buildBars(predictions) {
+      const c = document.getElementById('bars-container');
+      c.innerHTML = '';
+      predictions.forEach((p, i) => {
+        c.innerHTML += `
+          <div class="result-item">
+            <div class="result-header">
+              <span class="result-name" id="lbl-${i}">${p.className}</span>
+              <span class="result-pct"  id="pct-${i}">0%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" id="bar-${i}" style="width:0%"></div></div>
+          </div>`;
+      });
+    }
+
+    function updateBars(predictions) {
       let best = predictions[0];
       predictions.forEach((p, i) => {
         const pct = Math.round(p.probability * 100);
-        document.getElementById(`${containerId}-lbl-${i}`).textContent = p.className;
-        document.getElementById(`${containerId}-pct-${i}`).textContent = pct + '%';
-        document.getElementById(`${containerId}-bar-${i}`).style.width = pct + '%';
+        document.getElementById(`pct-${i}`).textContent = pct + '%';
+        document.getElementById(`bar-${i}`).style.width = pct + '%';
         if (p.probability > best.probability) best = p;
       });
-      document.getElementById(winnerId).innerHTML = '<small>Clasificación</small>🍇 ' + best.className;
+      document.getElementById('winner-name').textContent = best.className;
+      document.getElementById('winner-conf').textContent = Math.round(best.probability * 100) + '% de confianza';
     }
 
-    // ── CAMERA ──
+    /* ── CAMERA ── */
     async function initCamera() {
       const btn = document.getElementById('cam-btn');
-      const status = document.getElementById('cam-status');
       btn.disabled = true;
-      status.textContent = 'Cargando modelo…';
-
+      setStatus('Cargando modelo...');
       await loadModel();
 
-      webcam = new tmImage.Webcam(400, 400, true);
+      webcam = new tmImage.Webcam(480, 360, true);
       await webcam.setup();
       await webcam.play();
 
-      const preview = document.getElementById('cam-preview');
-      preview.innerHTML = '';
-      preview.appendChild(webcam.canvas);
+      const box = document.getElementById('preview-box');
+      document.getElementById('preview-empty').style.display = 'none';
+      box.appendChild(webcam.canvas);
 
-      buildBars('cam-label-container', model.getTotalClasses());
-      document.getElementById('cam-results').classList.add('visible');
-      document.getElementById('cam-winner').innerHTML = '<small>Clasificación</small>Analizando…';
-      document.getElementById('cam-stop-btn').style.display = 'inline-block';
+      buildBars(Array.from({length: model.getTotalClasses()}, (_, i) => ({className: '', probability: 0})));
+      showResults();
+      document.getElementById('cam-stop').style.display = 'block';
       btn.style.display = 'none';
-      status.textContent = 'Clasificando en tiempo real…';
+      setStatus('Clasificando en tiempo real...');
 
       async function loop() {
         webcam.update();
         const preds = await model.predict(webcam.canvas);
-        updateBars('cam-label-container', preds, 'cam-winner');
+        if (document.getElementById('bars-container').children.length === 0) buildBars(preds);
+        // update labels first time
+        preds.forEach((p, i) => { document.getElementById(`lbl-${i}`).textContent = p.className; });
+        updateBars(preds);
         rafId = requestAnimationFrame(loop);
       }
       loop();
@@ -427,35 +482,31 @@
 
     function stopCamera() {
       if (rafId) cancelAnimationFrame(rafId);
-      if (webcam) { webcam.stop(); webcam = null; }
-      const preview = document.getElementById('cam-preview');
-      preview.innerHTML = `<div class="preview-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-          <circle cx="12" cy="13" r="4"/>
-        </svg><span>La cámara aparecerá aquí</span></div>`;
-      document.getElementById('cam-results').classList.remove('visible');
-      document.getElementById('cam-btn').style.display = 'inline-block';
+      if (webcam) {
+        webcam.stop();
+        const canvas = document.getElementById('preview-box').querySelector('canvas');
+        if (canvas) canvas.remove();
+        webcam = null;
+      }
+      document.getElementById('preview-empty').style.display = 'flex';
+      document.getElementById('cam-btn').style.display = 'block';
       document.getElementById('cam-btn').disabled = false;
-      document.getElementById('cam-stop-btn').style.display = 'none';
-      document.getElementById('cam-status').textContent = '';
+      document.getElementById('cam-stop').style.display = 'none';
+      hideResults();
+      setStatus('');
     }
 
-    // ── UPLOAD ──
-    const dropZone = document.getElementById('drop-zone');
-    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) loadPreview(file);
+    /* ── UPLOAD ── */
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('dragover');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) loadPreview(f);
     });
 
-    function handleFile(e) {
-      const file = e.target.files[0];
-      if (file) loadPreview(file);
-    }
+    function handleFile(e) { if (e.target.files[0]) loadPreview(e.target.files[0]); }
 
     function loadPreview(file) {
       const reader = new FileReader();
@@ -463,32 +514,26 @@
         const img = document.getElementById('uploaded-img');
         img.src = ev.target.result;
         img.style.display = 'block';
-        document.getElementById('img-placeholder').style.display = 'none';
+        document.getElementById('preview-empty').style.display = 'none';
         document.getElementById('img-btn').disabled = false;
-        document.getElementById('img-results').classList.remove('visible');
-        document.getElementById('img-status').textContent = 'Imagen lista. Haz clic en Clasificar.';
+        hideResults();
+        setStatus('Imagen lista.');
       };
       reader.readAsDataURL(file);
     }
 
     async function classifyImage() {
       const btn = document.getElementById('img-btn');
-      const status = document.getElementById('img-status');
       btn.disabled = true;
-      status.textContent = 'Cargando modelo…';
-
+      setStatus('Cargando modelo...');
       await loadModel();
-
-      const img = document.getElementById('uploaded-img');
-      status.textContent = 'Clasificando…';
-
-      const preds = await model.predict(img);
-      buildBars('img-label-container', preds.length);
-      document.getElementById('img-results').classList.add('visible');
-      updateBars('img-label-container', preds, 'img-winner');
-
+      setStatus('Clasificando...');
+      const preds = await model.predict(document.getElementById('uploaded-img'));
+      buildBars(preds);
+      showResults();
+      updateBars(preds);
       btn.disabled = false;
-      status.textContent = 'Clasificación completada ✓';
+      setStatus('Clasificacion completada.');
     }
   </script>
 </body>
